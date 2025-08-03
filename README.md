@@ -91,6 +91,8 @@ itineraryAgent	Builds day-flow and Google Maps links
 contentCreator	Formats the plan into a Notion page
 
 
-⸻
+<img width="1062" height="665" alt="image" src="https://github.com/user-attachments/assets/e45ceb79-c719-444b-909a-9c66cda88ba6" />
 
-Let me know if you want a visual architecture diagram or a CLI/dev-ops variant of this description.
+<img width="1153" height="796" alt="image" src="https://github.com/user-attachments/assets/d2236707-3f6a-4f09-95fa-7f1328be34aa" />
+
+
