@@ -45,3 +45,52 @@ Explorer uses a combination of:
 	•	City exploration while traveling
 	•	Planning a perfect date or birthday surprise
 	•	Discovering new events or hidden gems near you
+
+
+ Absolutely — here’s a technical stack section in Markdown that fits alongside your Explorer project description:
+
+⸻
+
+# 🛠 Tech Stack
+
+Explorer is built using a modular, no-code–friendly architecture that combines automation, AI, and real-world data sources:
+
+🔄 n8n (Workflow Automation Framework)
+	•	Acts as the orchestration layer for all logic and API interactions
+	•	Handles AI agent routing, tool execution, and structured output parsing
+	•	Enables scalable and modular design with reusable agents (e.g., restaurantAgent, eventAgent, itineraryAgent)
+
+🤖 AI Agents via n8n LangChain-style Tooling
+	•	AI models (Anthropic, OpenAI) make decisions about what tools to call
+	•	Inputs like time, location, budget, and activity preferences are parsed and delegated to specific agents
+
+🌐 HTTP API Integrations
+	•	Google Places & Maps API:
+Used for geocoding, place search (searchText), and walking route generation
+	•	Booking.com API (via HTTP):
+Fetches hotel data and availability based on user preferences
+	•	(Optional) Event APIs or Ticketmaster:
+To fetch time-sensitive cultural or tech event listings in a given city
+
+🗂️ Notion Integration
+	•	Final itineraries and day plans can be exported or synced to Notion as rich, shareable pages
+	•	Useful for users planning in groups or wanting a permanent itinerary archive
+
+⸻
+
+🔧 Modular Tool Design
+
+Each activity type is handled by its own tool/agent:
+
+Tool / Agent	Function
+restaurantAgent	Finds food options by cuisine, area, budget
+eventAgent	Surfaces events by category + date
+workoutAgent	Generates run/walk loops near start point
+hotelAgent	Pulls nearby hotel options
+itineraryAgent	Builds day-flow and Google Maps links
+contentCreator	Formats the plan into a Notion page
+
+
+⸻
+
+Let me know if you want a visual architecture diagram or a CLI/dev-ops variant of this description.
