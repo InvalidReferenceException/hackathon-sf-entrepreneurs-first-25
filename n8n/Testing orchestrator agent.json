@@ -1,0 +1,793 @@
+{
+  "name": "Testing orchestrator agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        -80
+      ],
+      "id": "4679f0b3-8de1-4948-b1eb-a18195d3399c",
+      "name": "When chat message received",
+      "webhookId": "77f0653f-c1fd-4f43-982a-c7922bf4f9e2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        288
+      ],
+      "id": "e4eb8b4b-451c-4271-9883-da864c300e34",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        272
+      ],
+      "id": "bdb70902-1e9b-462f-b380-0dd8dfbbb9f0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        704
+      ],
+      "id": "38aa725f-cda7-4421-9858-eda86a62db3c",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        528
+      ],
+      "id": "7a23f62f-b4ea-480f-8654-6bd106b8014f",
+      "name": "Hotel Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Ai Agent that can fetch a restaurant",
+        "text": "Run the http request to request restaurents using the google api and then pull the 10 restaurants and sort them by rating and output the result in JSON form. \nMake sure the output is of the form\n\n{\n  \"restaurant_name\": \"BarbQ\",\n  \"location\": \"Golden Gate Park\",\n  \"hours\": \"9am - 12:00 PM daily\",\n  \"cost\": \"$$$\",\n  \"address\": \"Main Entrance at JFK Drive & 30th Avenue, San Francisco, CA\",\n  \"distance\": \"Approximately 4.5 miles from downtown San Francisco\"\n}\n\nMake sure the response has only the JSON. Make sure the JSON is clean and does not have any newlines",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        528
+      ],
+      "id": "0f79c89b-356a-4bbb-8b76-ddf3fbe01b46",
+      "name": "Restaurant Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        752
+      ],
+      "id": "fec9a120-57a8-4331-a5c2-4ddd03036115",
+      "name": "Anthropic Chat Model2",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        528
+      ],
+      "id": "6f54ca7e-b17c-43d7-80cc-9599fe6d70af",
+      "name": "Itinerary Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "AI Agent that generates the final high-level itinerary map with all the generated activities and directions and creates a Notion page",
+        "text": "You turn Google Maps directions URLs into structured itineraries. Return a JSON with keys [“Stops\", “Summary\", “Map itinerary”] and dump all the output individually into respective keys.\n\nRules:\n\n- Input will be a Google Maps URL.\n- Extract the ordered list of stops from the directions (origin → waypoints → destination).\n- Return a JSON with key \"response\" and valid markdown text with places (list of strings), summary (string), and the original url\n- The summary must be a single sentence like: \"From A go to B, then go to C, and finally go to D.\" But add details like what we are visiting or what food we are eating.\n- Use friendly place names as they appear in the URL. Capitalize properly.\n- Always return a JSON with keys [“Stops\", “Summary\", “Map itinerary”]\n\n\nExample input and output:\n- input: https://www.google.com/maps/dir/Oracle+Park,+Willie+Mays+Plaza,+San+Francisco,+CA/Golden+Gate+Bridge+Vista+Point,+San+Francisco,+CA/Il+Casaro+Pizzeria,+Columbus+Avenue,+San+Francisco,+CA/The+Painted+Ladies,+San+Francisco,+CA/@37.7923142,-122.4738018,13z/data=!3m2!4b1!5s0x808580fcf0f30205:0x5ffb46df3d9551c0!4m26!4m25!1m5!1m1!1s0x808f7fd770b93dfd:0xce4f29ed1da6117a!2m2!1d-122.3892168!2d37.7784136!1m5!1m1!1s0x808586ec0636bb65:0xfd29c84f7e83d613!2m2!1d-122.4752007!2d37.8077876!1m5!1m1!1s0x808580f3f38070a3:0x5e1c4a942f3e1b86!2m2!1d-122.4072715!2d37.7984975!1m5!1m1!1s0x808580a524767fb9:0x8421d0c06f9e59c5!2m2!1d-122.4327556!2d37.7762528!3e2?entry=ttu&g_ep=EgoyMDI1MDczMC4wIKXMDSoASAFQAw%3D%3D\n- Output:\n{“Stops”: [\n“Oracle Park, Willie Mays Plaza”,\n“Golden Gate Bridge Vista Point”,\n“Il Casaro Pizzeria, Columbus Avenue”,\n“The Painted Ladies”\n],\n“Summary”: “From Oracle Park at Willie Mays Plaza go to Golden Gate Bridge Vista Point for iconic bridge views, then enjoy authentic Italian pizza at Il Casaro Pizzeria on Columbus Avenue, and finally visit the famous colorful Victorian houses at The Painted Ladies.”,\n“Map itinerary”: “https://www.google.com/maps/dir/Oracle+Park,+Willie+Mays+Plaza,+San+Francisco,+CA/Golden+Gate+Bridge+Vista+Point,+San+Francisco,+CA/Il+Casaro+Pizzeria,+Columbus+Avenue,+San+Francisco,+CA/The+Painted+Ladies,+San+Francisco,+CA/@37.7923142,-122.4738018,13z/data=!3m2!4b1!5s0x808580fcf0f30205:0x5ffb46df3d9551c0!4m26!4m25!1m5!1m1!1s0x808f7fd770b93dfd:0xce4f29ed1da6117a!2m2!1d-122.3892168!2d37.7784136!1m5!1m1!1s0x808586ec0636bb65:0xfd29c84f7e83d613!2m2!1d-122.4752007!2d37.8077876!1m5!1m1!1s0x808580f3f38070a3:0x5e1c4a942f3e1b86!2m2!1d-122.4072715!2d37.7984975!1m5!1m1!1s0x808580a524767fb9:0x8421d0c06f9e59c5!2m2!1d-122.4327556!2d37.7762528!3e2?entry=ttu&g_ep=EgoyMDI1MDczMC4wIKXMDSoASAFQAw%3D%3D”\n}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        528
+      ],
+      "id": "ef8e15eb-6327-405c-857f-e440f892af1d",
+      "name": "Content Creator",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        688,
+        768
+      ],
+      "id": "aa68449e-5ec2-48a9-a132-7b7febc3be4f",
+      "name": "Anthropic Chat Model4",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        784
+      ],
+      "id": "48adf113-cfae-40a8-a67a-17e71d062e10",
+      "name": "Anthropic Chat Model5",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        800
+      ],
+      "id": "20ce52cd-d477-4b1b-a7db-4acbd1ef3759",
+      "name": "Anthropic Chat Model6",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"people_number\": {\n      \"type\": [\"integer\", \"null\"],\n      \"minimum\": 1,\n      \"default\": 1\n    },\n    \"start_location\": {\n      \"type\": [\"string\", \"null\"],\n      \"default\": \"San Francisco\"\n    },\n    \"time_range\": {\n      \"type\": [\"string\", \"null\"],\n      \"description\": \"E.g., 'morning', 'afternoon', or a specific time range like '10:00-14:00'\",\n      \"default\": \"afternoon\"\n    },\n    \"date_range\": {\n      \"type\": [\"string\", \"null\"],\n      \"description\": \"E.g., '2025-08-01 to 2025-08-02'\",\n      \"default\": \"today\"\n    },\n    \"activities\": {\n      \"type\": [\"array\", \"null\"],\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"category\": {\n            \"type\": [\"string\", \"null\"],\n            \"enum\": [\"restaurant\", \"hotel\", \"event\", \"workout\"],\n            \"default\": \"restaurant\"\n          },\n          \"keywords\": {\n            \"type\": [\"array\", \"null\"],\n            \"items\": {\n              \"type\": \"string\"\n            },\n            \"default\": []\n          },\n          \"budget\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"E.g., 'low', 'medium', 'high'\",\n            \"default\": \"medium\"\n          },\n          \"location\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"E.g., 'San Francisco', 'Mission', or coordinates\",\n            \"default\": \"San Francisco\"\n          }\n        },\n        \"additionalProperties\": false,\n        \"default\": {}\n      },\n      \"default\": []\n    },\n    \"Stops\": {\n      \"type\": \"string\",\n      \"description\": \"Ordered list of friendly place names: origin → waypoints → destination.\",\n      \"items\": { \"type\": \"string\" },\n      \"default\": []\n    },\n    \"Summary\": {\n      \"type\": \"string\",\n      \"description\": \"Single-sentence summary of the itinerary with brief details.\",\n      \"default\": \"\"\n    },\n    \"Map itinerary\": {\n      \"type\": \"string\",\n      \"format\": \"uri\",\n      \"description\": \"Original Google Maps directions URL.\",\n      \"default\": \"\"\n    }\n  },\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        416
+      ],
+      "id": "10a93ab3-9327-479c-b891-59faeb7988a6",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        192
+      ],
+      "id": "892f732c-a181-48ea-95bb-9ef5883f4baa",
+      "name": "Anthropic Chat Model7",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# Overview\n\nYou are the ultimate trip assistant. Your job is to send the user's query to the correct tool. You should never be writing emails or creating summaries — your sole responsibility is to call the correct tool.\n\n## Tools,\n\n- Think: Use this to think deeply or if you get stuck\n- eventAgent: Use this tool to find one event in the area for a given date and category/interest\n- restaurantAgent: Use this tool to find one restaurant in the given area and budget\n- hotelAgent: Use this tool to look for one hotel in the given area and budget\n- workoutAgent: Use this tool to create a run workout itinerary looping from a location back to it with a given location\n- itineraryAgent: Use this to generate the final high-level itinerary map with all the generated activities and directions\n- contentCreator: Use this tool to create a final notion page with the full itinerary, detailing locations, activity type and itineraries\n\n## Rules\n\n- You must get information and organize it into separate activities the user wants, and send it to the agent who needs it:\n    - events the user wants to go to must be sent to the eventAgent\n    - restaurants and eaters the user wants to go to must be sent to the restaurantAgent\n    - hotels the user wants to go to must be sent to the hotelAgent\n    - workouts the user wants to do must be sent to the workoutAgent\n    - the final descriptions and positions of the events should be passed to the itineraryAgent to create a multi-stop maps itinerary\n    - the maps itinerary should be sent to the contentCreator to output a detailed plan\n\n## Instructions\n\nCall the necessary tools based on the user's request\n\n## Examples\n\n- Input: I have 3 friends and we want to spend the afternoon in san francisco on Friday. We want to do a workout in the area, check out a tech event about ai agents, and then dine out at a french restaurant, we don’t want to spend more than 100 each. We need to sleep in a hotel in san francisco.\n    - Action: Use restaurantAgent to get a french restaurant in San Francisco with a budget below 100 dollars, which is open on Friday.\n    - Action: Use workoutAgent to get an itinerary to run in an area in san francisco\n    - Action: use eventAgent to look for a tech event in San Francisco for Friday night\n    - Action: use hotelAgent to to get available hotels for firday night\n    - itineraryAgent: collect the 4 activities and make a itinerary map\n    - contentCreator: take the itinerary and explain each step in text format"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "e3f6b531-c503-4122-ac75-ddb34fa68381",
+      "name": "Orchestrator AI Agent",
+      "notes": "Orchestrator Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        1200
+      ],
+      "id": "d3923a8a-5c6d-455d-b3a8-e5f1bcfecf9e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Oye7NlACKF5sV4A3",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://sf.funcheap.com/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        1296
+      ],
+      "id": "e2ee9adf-1a51-43ef-8d05-d1cfecde3e5a",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "text": "Scrape this https://sf.funcheap.com/ and pull all the events from it. Make the response strictly in a json format page with location, timing, name and cost of the events. Make sure the json is complete and valid. ",
+        "options": {
+          "systemMessage": "You are a helpful assistant that is responsible for pulling all events dates and times from a single URL and populate it in a tabular for easy viewing with fields like location if available, name and timing/date of the event. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        1040
+      ],
+      "id": "2b2394d4-43e8-40e8-adb9-31ac0b131fef",
+      "name": "Web Scrapper Tool"
+    },
+    {
+      "parameters": {
+        "toolDescription": "AI Agent that calls Events",
+        "text": "You are a helpful assistant that will accept the user's start_location and find places that the user can visit and also list them in a JSON format with entries like location name, address, category, distance from users location and no other text. Add about 20 items to the list which includes at least 10 site seeing places. Take the location, time from the chat context. \nYou also need to trigger the web scrapping tool and gather the information from it. And merge the responses from the current prompt with the outputs of the scrapper and build a combined json output with all the information. Make sure the json is complete and correct.   \nHere is an example of one entry in the JSON output:\n{ \"event_name\": \"Outside Lands Music & Arts Festival\", \"location\": \"Golden Gate Park\", \"time\": \"August 8-10, 2025, starting at 12:00 PM daily\", \"cost\": “$100”, \"address\": \"Main Entrance at JFK Drive & 30th Avenue, San Francisco, CA\", \"distance\": \"Approximately 4.5 miles from downtown San Francisco\" }\nMake sure the json is complete and correct. Without any newlines.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        528
+      ],
+      "id": "6073c8ba-c1db-411a-844f-5b29ffe56aa6",
+      "name": "Event Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        736
+      ],
+      "id": "796e2cdb-abbd-456b-8e6a-649ba90e550f",
+      "name": "Anthropic Chat Model3",
+      "credentials": {
+        "anthropicApi": {
+          "id": "KJyJaSZ3iCKghZDr",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "<InsertAPIKeyHere>"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "places.displayName"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"textQuery\":\n    \"restaurant\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -304,
+        752
+      ],
+      "id": "b6c29c45-1a3b-4eb8-93cf-1d0c82356f3f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "<InsertAPIKeyHere>"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "places.googleMapsUri"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "textQuery",
+              "value": "=Park near {{$json['output']['start_location']}}"
+            },
+            {
+              "name": "maxResultCount",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        528
+      ],
+      "id": "444894ec-8371-440c-9b5b-28444c1507cd",
+      "name": "Workout Agent"
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "value": "https://www.notion.so/aglaia-codes/Hackathon-Winners-243c574ec740809bafb3d0d05be28052?pvs=18",
+          "mode": "url"
+        },
+        "title": "Itinerary",
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "={{ $json.output.Stops}}"
+            },
+            {
+              "textContent": "={{ $json.output.Summary}}"
+            },
+            {
+              "textContent": "={{ $json.output['Map itinerary']}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "83642f45-a12e-4e35-bb7d-b0183287b473",
+      "name": "Create a page",
+      "credentials": {
+        "notionApi": {
+          "id": "BQh4PyeYVPGGlNPy",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"Stops\": {\"type\": \"string\"},\n  \"Summary\": {\"type\": \"string\"},\n  \"Map itinerary\": {\"type\": \"string\"}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1648,
+        752
+      ],
+      "id": "1ef24428-480a-4f8a-8f8d-8fb13d683d17",
+      "name": "Structured Output Parser1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Restaurant Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Hotel Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Itinerary Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Event Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Restaurant Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hotel Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restaurant Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Hotel Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Itinerary Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Creator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model4": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Anthropic Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Itinerary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Creator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model7": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Web Scrapper Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Web Scrapper Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Scrapper Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Event Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Event Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Event Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "Restaurant Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workout Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orchestrator AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Content Creator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "58d007e4-134f-4f5b-9703-07a693c4b58c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "571416a5315362c048b8f06a6bc7100f06846765ab95fa2c6200ed8867b1fba8"
+  },
+  "id": "AOeFWtRYlhwArLo2",
+  "tags": []
+}
